@@ -1,7 +1,20 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import { useEffect, useState} from 'react'
+import Link from 'next/link'
 
 export default function Home() {
+const [owners, setOwners]= useState([]);
+  useEffect(()=>{
+   loadData();
+  }, []);
+
+  const loadData = async ()=>{
+    const data = await fetch('http://localhost:4001/vehicles')
+    const ownersList = await data.json();
+    setOwners(ownersList);
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -10,9 +23,13 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to Auto Trader
-        </h1>
+        {
+          owners.map((owner, index)=>(
+            <Link key={index} href={`${owner.vehicle}/${owner.ownerName}`}>
+              <a>Navigate to {owner.ownerName}'s {owner.vehicle}</a>
+            </Link>
+          ))
+        }
       </main>
 
       <footer className={styles.footer}>
